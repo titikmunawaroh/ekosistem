@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjelajah Ekosistem - Kelas 5 SD</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Tone.js untuk efek suara procedural (tanpa URL eksternal) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fdf8f5; /* Light earthy tone */
+            background-image: radial-gradient(#dcfce7 2px, transparent 2px), radial-gradient(#fef3c7 2px, transparent 2px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.4);
+            border-color: #15803d; /* green-700 */
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes rustle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .animate-rustle:hover {
+            animation: rustle 0.5s ease-in-out infinite;
+        }
+
+        /* Custom Scrollbar (Green & Brown theme) */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #fef3c7; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { background: #8b5cf6; background-color: #854d0e; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #713f12; }
+
+        /* Game Card Styles */
+        .game-item {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .game-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex items-center justify-center text-amber-900">
+
+    <div class="max-w-5xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-amber-700 relative">
+        
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-green-600 to-amber-700 p-6 text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20 pointer-events-none">
+                <i class="fas fa-leaf text-white text-4xl absolute top-4 left-10 animate-float" style="animation-delay: 0s;"></i>
+                <i class="fas fa-tree text-white text-5xl absolute bottom-2 right-12 animate-float" style="animation-delay: 1s;"></i>
+                <i class="fas fa-seedling text-white text-3xl absolute top-6 right-1/4 animate-float" style="animation-delay: 2s;"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg relative z-10 flex justify-center items-center gap-3">
+                <i class="fas fa-globe-asia"></i> Penjelajah Ekosistem
+            </h1>
+            <p class="text-green-100 font-bold mt-2 text-lg relative z-10">IPAS - Kelas 5 SD</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-3 p-4 bg-amber-50 border-b-4 border-green-200">
+            <button onclick="nav('home')" class="tab-btn active px-5 py-2.5 rounded-xl font-bold text-amber-800 bg-white border-2 border-amber-200 hover:bg-amber-100" id="btn-home"><i class="fas fa-home mr-2"></i>Beranda</button>
+            <button onclick="nav('materi')" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-amber-800 bg-white border-2 border-amber-200 hover:bg-amber-100" id="btn-materi"><i class="fas fa-book-open mr-2"></i>Materi</button>
+            <button onclick="nav('latihan')" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-amber-800 bg-white border-2 border-amber-200 hover:bg-amber-100" id="btn-latihan"><i class="fas fa-pencil-alt mr-2"></i>Latihan</button>
+            <button onclick="nav('penilaian')" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-amber-800 bg-white border-2 border-amber-200 hover:bg-amber-100" id="btn-penilaian"><i class="fas fa-clipboard-list mr-2"></i>Penilaian</button>
+            <button onclick="nav('game')" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-amber-800 bg-white border-2 border-amber-200 hover:bg-amber-100" id="btn-game"><i class="fas fa-gamepad mr-2"></i>Game</button>
+            <button onclick="nav('refleksi')" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-amber-800 bg-white border-2 border-amber-200 hover:bg-amber-100" id="btn-refleksi"><i class="fas fa-heart mr-2"></i>Refleksi</button>
+        </nav>
+
+        <main class="p-6 md:p-8 min-h-[500px] max-h-[70vh] overflow-y-auto relative bg-white">
+            
+            <!-- SECTION: BERANDA -->
+            <div id="sec-home" class="section-content text-center animate-float">
+                <div class="relative inline-block mb-6">
+                    <img src="https://placehold.co/400x250/16a34a/ffffff?text=Selamat+Datang+di+Alam!" alt="Welcome Nature" class="rounded-3xl shadow-xl border-4 border-amber-200 object-cover w-full max-w-md mx-auto">
+                    <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-full shadow-lg text-4xl animate-rustle">🦊</div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-green-700 mb-4">Halo, Sobat Alam! 🌿</h2>
+                <p class="text-lg text-amber-800 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    Hari ini kita akan bertualang mempelajari <strong>Ekosistem</strong>. Kita akan melihat bagaimana hewan, tumbuhan, dan lingkungan sekitar kita saling membutuhkan satu sama lain. Siap untuk bertualang?
+                </p>
+                <button onclick="nav('materi')" class="bg-gradient-to-r from-amber-600 to-amber-700 text-white text-xl font-bold py-3 px-10 rounded-full shadow-lg hover:from-amber-700 hover:to-amber-800 transform hover:scale-110 transition-all border-4 border-amber-200">
+                    Mulai Petualangan <i class="fas fa-compass ml-2 animate-spin-slow"></i>
+                </button>
+            </div>
+
+            <!-- SECTION: MATERI -->
+            <div id="sec-materi" class="section-content hidden space-y-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-extrabold text-green-700 border-b-4 border-amber-300 pb-2 inline-block">Buku Panduan Ekosistem</h2>
+                </div>
+                
+                <!-- Definisi -->
+                <div class="bg-green-50 p-6 rounded-2xl border-l-8 border-green-500 shadow-sm flex flex-col md:flex-row items-center gap-6">
+                    <div class="text-5xl text-green-600 bg-white p-4 rounded-full shadow-md"><i class="fas fa-globe-americas"></i></div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-green-800 mb-2">1. Apa itu Ekosistem?</h3>
+                        <p class="text-lg text-amber-900">
+                            <strong>Ekosistem</strong> adalah tempat di mana makhluk hidup (seperti hewan dan tumbuhan) dan benda tak hidup (seperti air, tanah, dan cahaya) saling berinteraksi dan bergantung satu sama lain.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Komponen -->
+                <div class="bg-amber-50 p-6 rounded-2xl border-l-8 border-amber-500 shadow-sm">
+                    <h3 class="text-2xl font-bold text-amber-800 mb-4"><i class="fas fa-puzzle-piece text-amber-600 mr-2"></i>2. Komponen Ekosistem</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-5 rounded-xl border border-green-200 shadow">
+                            <h4 class="font-bold text-xl text-green-600 flex items-center mb-2"><i class="fas fa-frog mr-2"></i>Biotik (Hidup)</h4>
+                            <p class="text-amber-800 mb-2">Semua makhluk hidup di dalam ekosistem.</p>
+                            <ul class="list-disc ml-5 text-amber-700 space-y-1">
+                                <li>Manusia 🚶‍♂️</li>
+                                <li>Hewan (Singa, Ikan, Burung) 🦁</li>
+                                <li>Tumbuhan (Pohon, Rumput) 🌳</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-amber-200 shadow">
+                            <h4 class="font-bold text-xl text-amber-600 flex items-center mb-2"><i class="fas fa-wind mr-2"></i>Abiotik (Tak Hidup)</h4>
+                            <p class="text-amber-800 mb-2">Benda-benda tak hidup yang mendukung kehidupan.</p>
+                            <ul class="list-disc ml-5 text-amber-700 space-y-1">
+                                <li>Cahaya Matahari ☀️</li>
+                                <li>Air 💧</li>
+                                <li>Tanah dan Udara 🪨</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jenis Ekosistem -->
+                <div class="bg-green-50 p-6 rounded-2xl border-l-8 border-green-500 shadow-sm">
+                    <h3 class="text-2xl font-bold text-green-800 mb-4"><i class="fas fa-map-signs text-green-600 mr-2"></i>3. Jenis-Jenis Ekosistem</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-xl p-4 shadow flex gap-4 items-start">
+                            <img src="https://placehold.co/80x80/22c55e/ffffff?text=Hutan" class="rounded-lg object-cover" alt="Alami">
+                            <div>
+                                <h4 class="font-bold text-green-700 text-lg">Ekosistem Alami</h4>
+                                <p class="text-sm text-amber-800">Diciptakan oleh Tuhan tanpa campur tangan manusia. Contoh: Hutan, Laut, Gurun.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow flex gap-4 items-start">
+                            <img src="https://placehold.co/80x80/d97706/ffffff?text=Sawah" class="rounded-lg object-cover" alt="Buatan">
+                            <div>
+                                <h4 class="font-bold text-amber-700 text-lg">Ekosistem Buatan</h4>
+                                <p class="text-sm text-amber-800">Dibuat oleh manusia untuk keperluannya. Contoh: Sawah, Kolam, Akuarium.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: LATIHAN -->
+            <div id="sec-latihan" class="section-content hidden">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-extrabold text-amber-700 border-b-4 border-green-300 pb-2 inline-block">Latihan Seru (10 Soal) 📝</h2>
+                    <p class="text-amber-900 mt-2">Jawablah pertanyaan berikut sambil memperhatikan gambar. Bunyinya akan memberitahumu jika benar!</p>
+                </div>
+
+                <div class="space-y-6" id="latihan-container">
+                    <!-- Soal 1 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-green-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/fbbf24/ffffff?text=Matahari" alt="Matahari" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">1. Gambar di samping termasuk dalam komponen ekosistem...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Abiotik</button>
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Biotik</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Soal 2 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-amber-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/22c55e/ffffff?text=Padi" alt="Padi" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">2. Tumbuhan padi merupakan makhluk hidup, sehingga disebut komponen...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Abiotik</button>
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Biotik</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 3 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-green-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/10b981/ffffff?text=Hutan" alt="Hutan" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">3. Hutan merupakan contoh dari ekosistem...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Alami</button>
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Buatan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 4 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-amber-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/0ea5e9/ffffff?text=Akuarium" alt="Akuarium" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">4. Akuarium dibuat oleh manusia. Akuarium adalah contoh ekosistem...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Alami</button>
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Buatan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 5 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-green-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/64748b/ffffff?text=Batu" alt="Batu" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">5. Benda pada gambar di samping termasuk lingkungan...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Abiotik</button>
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Biotik</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 6 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-amber-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/d97706/ffffff?text=Kucing" alt="Kucing" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">6. Hewan pada gambar bernapas dan butuh makan, ia adalah bagian dari komponen...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Biotik</button>
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Abiotik</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 7 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-green-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/3b82f6/ffffff?text=Air" alt="Air" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">7. Makhluk hidup sangat membutuhkan zat ini untuk minum. Benda ini termasuk...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Biotik</button>
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Abiotik</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 8 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-amber-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/84cc16/ffffff?text=Taman" alt="Taman" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">8. Taman kota yang ditanami banyak pohon oleh pemerintah adalah contoh ekosistem...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Alami</button>
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Buatan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 9 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-green-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/0f766e/ffffff?text=Laut" alt="Laut" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">9. Ekosistem terbesar di bumi yang memiliki rasa air asin adalah...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Ekosistem Laut</button>
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Ekosistem Sawah</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soal 10 -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-amber-100">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <img src="https://placehold.co/200x150/78350f/ffffff?text=Tanah" alt="Tanah" class="rounded-xl shadow-sm w-full md:w-48 h-32 object-cover">
+                            <div class="flex-1 w-full">
+                                <p class="text-lg font-bold text-amber-900 mb-3">10. Tempat tumbuhnya tanaman dan hidupnya cacing merupakan komponen abiotik bernama...</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <button onclick="cekLat(this, false)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">A. Udara</button>
+                                    <button onclick="cekLat(this, true)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2 px-4 rounded-lg font-semibold text-left transition-colors">B. Tanah</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECTION: PENILAIAN -->
+            <div id="sec-penilaian" class="section-content hidden">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-extrabold text-green-700 border-b-4 border-amber-300 pb-2 inline-block">Kuis Penjelajah 🏆</h2>
+                </div>
+                
+                <div id="quiz-intro" class="text-center bg-white p-8 rounded-2xl shadow border-2 border-amber-200 max-w-xl mx-auto">
+                    <i class="fas fa-clipboard-check text-6xl text-green-500 mb-4 animate-float"></i>
+                    <p class="text-amber-900 mb-6 text-lg">Waktunya menguji ingatanmu tentang ekosistem! Ada 5 pertanyaan penting yang menantimu.</p>
+                    <button onclick="startQuiz()" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 text-lg shadow-lg transition-transform hover:scale-105 border-4 border-green-200">
+                        Mulai Kuis Sekarang
+                    </button>
+                </div>
+
+                <div id="quiz-container" class="hidden max-w-2xl mx-auto bg-white p-6 rounded-3xl shadow-lg border-4 border-amber-200 relative">
+                    <div class="flex justify-between items-center mb-6 border-b-2 border-amber-100 pb-3">
+                        <span class="font-bold text-amber-700 bg-amber-100 px-4 py-1 rounded-full" id="q-counter">Soal 1 / 5</span>
+                        <span class="font-bold text-green-600 bg-green-100 px-4 py-1 rounded-full flex items-center">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i> Skor: <span id="q-score" class="ml-1">0</span>
+                        </span>
+                    </div>
+                    
+                    <h3 id="q-text" class="text-2xl font-bold text-amber-900 mb-6 leading-relaxed">Pertanyaan muncul di sini?</h3>
+                    
+                    <div class="space-y-3" id="q-options">
+                        <!-- Pilihan akan dimasukkan lewat JS -->
+                    </div>
+                </div>
+
+                <div id="quiz-result" class="hidden text-center max-w-md mx-auto bg-white p-8 rounded-3xl shadow-lg border-4 border-green-300 animate-float">
+                    <i class="fas fa-award text-7xl text-yellow-400 mb-4"></i>
+                    <h3 class="text-3xl font-bold text-amber-900 mb-2">Selesai!</h3>
+                    <p class="text-lg text-amber-800 mb-4">Nilai Ekosistem Kamu:</p>
+                    <div class="text-7xl font-black text-green-600 mb-6 drop-shadow-md" id="final-score">100</div>
+                    <p id="score-msg" class="text-xl font-bold text-amber-700 mb-8"></p>
+                    <button onclick="startQuiz()" class="bg-amber-600 text-white font-bold py-3 px-8 rounded-full hover:bg-amber-700 shadow border-2 border-amber-200">
+                        Ulangi Kuis <i class="fas fa-redo ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION: GAME -->
+            <div id="sec-game" class="section-content hidden">
+                <div class="text-center mb-4">
+                    <h2 class="text-3xl font-extrabold text-amber-700 border-b-4 border-green-300 pb-2 inline-block">Game: Sortir Alam! 🌿🪨</h2>
+                    <p class="text-amber-900 mt-2">Dengarkan suaranya! Masukkan benda ke kotak Biotik (Hidup) atau Abiotik (Tak Hidup).</p>
+                </div>
+
+                <div id="game-start-ui" class="text-center mt-8">
+                    <button onclick="initGame()" class="bg-green-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg hover:bg-green-700 transform hover:scale-110 transition-all border-4 border-green-200">
+                        Main Sekarang <i class="fas fa-play ml-2"></i>
+                    </button>
+                </div>
+
+                <div id="game-board" class="hidden max-w-3xl mx-auto">
+                    <!-- Skor -->
+                    <div class="flex justify-between items-center mb-6 px-4">
+                        <div class="bg-white px-4 py-2 rounded-xl font-bold text-amber-800 shadow border-2 border-amber-200">Item: <span id="game-progress">1/8</span></div>
+                        <div class="bg-white px-4 py-2 rounded-xl font-bold text-green-600 shadow border-2 border-green-200">Skor: <span id="game-score">0</span></div>
+                    </div>
+
+                    <!-- Benda yang harus disortir -->
+                    <div class="flex justify-center mb-8">
+                        <div id="active-item" class="bg-white p-6 rounded-3xl shadow-xl border-4 border-amber-400 text-center transform transition-transform animate-float">
+                            <div id="item-icon" class="text-7xl mb-3">🌳</div>
+                            <h3 id="item-name" class="text-2xl font-bold text-amber-900">Pohon</h3>
+                        </div>
+                    </div>
+
+                    <!-- Pilihan Kotak -->
+                    <div class="grid grid-cols-2 gap-4 md:gap-10">
+                        <button onclick="checkGameSort('Biotik')" class="bg-gradient-to-b from-green-400 to-green-600 text-white p-6 rounded-3xl shadow-lg border-4 border-green-200 hover:scale-105 transition-transform flex flex-col items-center justify-center">
+                            <i class="fas fa-leaf text-5xl mb-2"></i>
+                            <span class="text-2xl font-black">BIOTIK</span>
+                            <span class="text-sm opacity-90 mt-1">(Makhluk Hidup)</span>
+                        </button>
+                        
+                        <button onclick="checkGameSort('Abiotik')" class="bg-gradient-to-b from-amber-500 to-amber-700 text-white p-6 rounded-3xl shadow-lg border-4 border-amber-200 hover:scale-105 transition-transform flex flex-col items-center justify-center">
+                            <i class="fas fa-wind text-5xl mb-2"></i>
+                            <span class="text-2xl font-black">ABIOTIK</span>
+                            <span class="text-sm opacity-90 mt-1">(Benda Tak Hidup)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game Selesai -->
+                <div id="game-win" class="hidden text-center mt-6 bg-white p-8 rounded-3xl shadow-xl border-4 border-green-400 max-w-md mx-auto animate-float">
+                    <h3 class="text-3xl font-black text-green-600 mb-2">Luar Biasa! 🎉</h3>
+                    <p class="text-amber-800 text-lg mb-4">Kamu berhasil menyortir alam dengan sangat baik!</p>
+                    <p class="text-2xl font-bold text-amber-900 mb-6">Skor Akhir: <span id="game-final-score" class="text-green-600"></span>/8</p>
+                    <button onclick="initGame()" class="bg-amber-600 text-white font-bold py-3 px-8 rounded-full hover:bg-amber-700 shadow-md">Main Lagi</button>
+                </div>
+            </div>
+
+            <!-- SECTION: REFLEKSI -->
+            <div id="sec-refleksi" class="section-content hidden">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-extrabold text-green-700 border-b-4 border-amber-300 pb-2 inline-block">Refleksi Hati 💚</h2>
+                </div>
+                
+                <div class="max-w-xl mx-auto bg-white p-8 rounded-3xl shadow-lg border-4 border-green-100 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-green-50 opacity-50 z-0"></div>
+                    
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-bold text-amber-900 mb-8">Bagaimana perasaanmu setelah belajar tentang Ekosistem hari ini?</h3>
+                        
+                        <div class="flex justify-center gap-6 mb-8">
+                            <button onclick="submitRefleksi('sedih')" class="text-6xl hover:scale-125 transition-transform opacity-70 hover:opacity-100 filter grayscale hover:grayscale-0" title="Sulit / Bingung">
+                                😥
+                            </button>
+                            <button onclick="submitRefleksi('biasa')" class="text-6xl hover:scale-125 transition-transform opacity-70 hover:opacity-100 filter grayscale hover:grayscale-0" title="Biasa Saja">
+                                😐
+                            </button>
+                            <button onclick="submitRefleksi('senang')" class="text-6xl hover:scale-125 transition-transform opacity-70 hover:opacity-100 filter grayscale hover:grayscale-0" title="Senang / Paham">
+                                🤩
+                            </button>
+                        </div>
+
+                        <div id="refleksi-msg" class="hidden bg-white p-5 rounded-2xl border-2 border-dashed shadow-inner font-bold text-lg">
+                            <!-- Pesan dinamis di sini -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Custom Message Box (To avoid alert()) -->
+    <div id="msg-box" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform scale-90 transition-transform duration-300 border-4 border-amber-700" id="msg-content">
+            <div class="text-center mb-4" id="msg-icon">
+                <i class="fas fa-info-circle text-5xl text-blue-500"></i>
+            </div>
+            <h3 id="msg-title" class="text-2xl font-black mb-2 text-center text-amber-900">Pesan</h3>
+            <p id="msg-text" class="text-amber-800 text-center mb-8 text-lg font-medium">Isi pesan di sini.</p>
+            <div class="text-center">
+                <button onclick="closeMsg()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition-colors border-2 border-green-200">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Setup Tone.js (Synthesizer Audio) ---
+        let synth;
+        let isAudioReady = false;
+
+        async function initAudio() {
+            if(!isAudioReady) {
+                await Tone.start();
+                // Simple synth for game sounds
+                synth = new Tone.Synth().toDestination();
+                // Adjust volume
+                synth.volume.value = -5; 
+                isAudioReady = true;
+            }
+        }
+
+        function playSound(type) {
+            if(!isAudioReady || !synth) return;
+            
+            const now = Tone.now();
+            if(type === 'correct') {
+                // Happy high notes
+                synth.triggerAttackRelease("C5", "8n", now);
+                synth.triggerAttackRelease("E5", "8n", now + 0.15);
+                synth.triggerAttackRelease("G5", "4n", now + 0.3);
+            } else if (type === 'wrong') {
+                // Low buzz
+                synth.triggerAttackRelease("C3", "4n", now);
+                synth.triggerAttackRelease("G2", "4n", now + 0.2);
+            } else if (type === 'pop') {
+                // Simple pop for clicks
+                synth.triggerAttackRelease("G4", "16n", now);
+            }
+        }
+
+        // Initialize audio on first click anywhere
+        document.body.addEventListener('click', () => {
+            initAudio();
+        }, { once: true });
+
+
+        // --- Navigation Logic ---
+        function nav(sectionId) {
+            playSound('pop'); // UI sound feedback
+            
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            // Show target section
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'bg-green-600', 'text-white', 'border-green-700');
+                el.classList.add('text-amber-800', 'bg-white', 'border-amber-200');
+                // Remove custom shadow from inactive
+                el.style.boxShadow = '';
+            });
+            
+            let activeBtn = document.getElementById('btn-' + sectionId);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-amber-800', 'bg-white', 'border-amber-200');
+                activeBtn.classList.add('active', 'bg-green-600', 'text-white', 'border-green-700');
+            }
+        }
+
+        // --- Custom MsgBox Logic ---
+        function showMsg(title, text, type = 'info') {
+            const box = document.getElementById('msg-box');
+            const content = document.getElementById('msg-content');
+            const titleEl = document.getElementById('msg-title');
+            const iconEl = document.getElementById('msg-icon');
+            
+            titleEl.innerText = title;
+            document.getElementById('msg-text').innerText = text;
+            
+            if(type === 'success') {
+                titleEl.className = "text-3xl font-black mb-2 text-center text-green-600";
+                iconEl.innerHTML = '<i class="fas fa-check-circle text-6xl text-green-500"></i>';
+                content.className = "bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform scale-90 transition-transform duration-300 border-4 border-green-500";
+            } else if (type === 'error') {
+                titleEl.className = "text-3xl font-black mb-2 text-center text-red-500";
+                iconEl.innerHTML = '<i class="fas fa-times-circle text-6xl text-red-500"></i>';
+                content.className = "bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform scale-90 transition-transform duration-300 border-4 border-red-500";
+            } else {
+                titleEl.className = "text-3xl font-black mb-2 text-center text-amber-600";
+                iconEl.innerHTML = '<i class="fas fa-info-circle text-6xl text-amber-500"></i>';
+                content.className = "bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform scale-90 transition-transform duration-300 border-4 border-amber-500";
+            }
+
+            box.classList.remove('hidden');
+            // Trigger reflow
+            void box.offsetWidth; 
+            box.classList.remove('opacity-0');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+        }
+
+        function closeMsg() {
+            playSound('pop');
+            const box = document.getElementById('msg-box');
+            const content = document.getElementById('msg-content');
+            
+            box.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 300);
+        }
+
+        // --- Latihan Logic ---
+        function cekLat(btn, isCorrect) {
+            // Reset siblings style
+            const container = btn.parentElement;
+            const buttons = container.querySelectorAll('button');
+            buttons.forEach(b => {
+                b.classList.remove('bg-green-500', 'bg-red-500', 'text-white', 'border-green-600', 'border-red-600');
+                b.classList.add('bg-amber-50', 'text-amber-800', 'border-amber-200');
+            });
+
+            btn.classList.remove('bg-amber-50', 'text-amber-800', 'border-amber-200');
+            
+            if(isCorrect) {
+                playSound('correct');
+                btn.classList.add('bg-green-500', 'text-white', 'border-green-600');
+                showMsg("Luar Biasa!", "Jawaban kamu sangat tepat! Lanjutkan belajarnya.", "success");
+            } else {
+                playSound('wrong');
+                btn.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                showMsg("Kurang Tepat", "Jangan menyerah, coba perhatikan lagi pertanyaannya ya.", "error");
+            }
+        }
+
+        // --- Quiz Logic ---
+        const quizData = [
+            {
+                q: "Hubungan timbal balik antara makhluk hidup dan lingkungannya disebut...",
+                options: ["Populasi", "Habitat", "Ekosistem", "Komunitas"],
+                ans: 2
+            },
+            {
+                q: "Berikut ini yang merupakan komponen abiotik (tak hidup) adalah...",
+                options: ["Rumput, Pohon, Jamur", "Air, Udara, Cahaya Matahari", "Kambing, Sapi, Kerbau", "Burung, Ikan, Kucing"],
+                ans: 1
+            },
+            {
+                q: "Sawah adalah tempat yang sengaja dibuat oleh manusia untuk bertani. Sawah termasuk ekosistem...",
+                options: ["Alami", "Buatan", "Biotik", "Hutan"],
+                ans: 1
+            },
+            {
+                q: "Makhluk hidup yang dapat membuat makanannya sendiri (seperti tumbuhan) dalam ekosistem disebut...",
+                options: ["Produsen", "Konsumen", "Pengurai", "Abiotik"],
+                ans: 0
+            },
+            {
+                q: "Jika di hutan tidak ada air dan cahaya matahari, apa yang akan terjadi pada komponen biotik (hewan dan tumbuhan)?",
+                options: ["Akan tumbuh semakin besar", "Tidak akan terjadi apa-apa", "Akan kesulitan hidup dan bisa mati", "Akan berubah menjadi komponen abiotik"],
+                ans: 2
+            }
+        ];
+
+        let currentQ = 0;
+        let quizScore = 0;
+
+        function startQuiz() {
+            playSound('pop');
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            currentQ = 0;
+            quizScore = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const qData = quizData[currentQ];
+            document.getElementById('q-counter').innerText = `Soal ${currentQ + 1} / ${quizData.length}`;
+            document.getElementById('q-score').innerText = (quizScore * (100/quizData.length));
+            document.getElementById('q-text').innerText = qData.q;
+            
+            const optionsContainer = document.getElementById('q-options');
+            optionsContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-amber-200 hover:border-green-500 hover:bg-green-50 font-bold text-amber-900 transition-all text-lg shadow-sm";
+                btn.innerText = String.fromCharCode(65 + index) + ". " + opt;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(index) {
+            const qData = quizData[currentQ];
+            if(index === qData.ans) {
+                quizScore++;
+                playSound('correct');
+                showMsg("Benar Sekali!", "Wah, pengetahuanmu tentang ekosistem hebat!", "success");
+            } else {
+                playSound('wrong');
+                showMsg("Ops! Salah", "Jawaban yang benar adalah: " + qData.options[qData.ans], "error");
+            }
+            
+            currentQ++;
+            // Lanjut ke soal berikutnya setelah notifikasi sedikit tertutup
+            setTimeout(() => {
+                if(currentQ < quizData.length) {
+                    loadQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 800);
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            
+            let finalScore = quizScore * (100/quizData.length);
+            document.getElementById('final-score').innerText = finalScore;
+            
+            let msg = "";
+            if(finalScore === 100) {
+                msg = "Sempurna! Kamu adalah Ahli Ekosistem sejati! 🌟";
+                playSound('correct'); // extra happy sound
+            }
+            else if(finalScore >= 80) msg = "Hebat! Kamu sudah sangat memahami alam. 🌳";
+            else if(finalScore >= 60) msg = "Bagus! Terus baca buku materi agar makin jago. 📖";
+            else msg = "Jangan menyerah! Ayo baca materi lagi dan coba kuisnya kembali. 💪";
+            
+            document.getElementById('score-msg').innerText = msg;
+        }
+
+        // --- Game Logic ---
+        const gameItems = [
+            { name: "Pohon", icon: "🌳", type: "Biotik" },
+            { name: "Batu", icon: "🪨", type: "Abiotik" },
+            { name: "Ayam", icon: "🐓", type: "Biotik" },
+            { name: "Air Sungai", icon: "💧", type: "Abiotik" },
+            { name: "Kucing", icon: "🐈", type: "Biotik" },
+            { name: "Sinar Matahari", icon: "☀️", type: "Abiotik" },
+            { name: "Rumput", icon: "🌿", type: "Biotik" },
+            { name: "Udara (Angin)", icon: "💨", type: "Abiotik" }
+        ];
+
+        let currentGameItems = [];
+        let currentGameIndex = 0;
+        let gameScore = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initGame() {
+            playSound('pop');
+            document.getElementById('game-start-ui').classList.add('hidden');
+            document.getElementById('game-win').classList.add('hidden');
+            document.getElementById('game-board').classList.remove('hidden');
+            
+            currentGameItems = [...gameItems];
+            shuffle(currentGameItems);
+            
+            currentGameIndex = 0;
+            gameScore = 0;
+            updateGameUI();
+        }
+
+        function updateGameUI() {
+            if(currentGameIndex >= currentGameItems.length) {
+                finishGame();
+                return;
+            }
+
+            const item = currentGameItems[currentGameIndex];
+            document.getElementById('game-progress').innerText = `${currentGameIndex + 1}/${currentGameItems.length}`;
+            document.getElementById('game-score').innerText = gameScore;
+            
+            const activeItemBox = document.getElementById('active-item');
+            
+            // simple pop animation
+            activeItemBox.classList.remove('scale-100');
+            activeItemBox.classList.add('scale-50', 'opacity-0');
+            
+            setTimeout(() => {
+                document.getElementById('item-icon').innerText = item.icon;
+                document.getElementById('item-name').innerText = item.name;
+                
+                activeItemBox.classList.remove('scale-50', 'opacity-0');
+                activeItemBox.classList.add('scale-100');
+            }, 200);
+        }
+
+        function checkGameSort(selectedType) {
+            const currentItem = currentGameItems[currentGameIndex];
+            const activeItemBox = document.getElementById('active-item');
+            
+            if(currentItem.type === selectedType) {
+                gameScore++;
+                playSound('correct');
+                // Visual feedback check
+                activeItemBox.classList.add('border-green-500', 'bg-green-50');
+            } else {
+                playSound('wrong');
+                // Visual feedback error
+                activeItemBox.classList.add('border-red-500', 'bg-red-50');
+            }
+
+            setTimeout(() => {
+                // Reset box visual
+                activeItemBox.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
+                currentGameIndex++;
+                updateGameUI();
+            }, 600);
+        }
+
+        function finishGame() {
+            document.getElementById('game-board').classList.add('hidden');
+            document.getElementById('game-win').classList.remove('hidden');
+            document.getElementById('game-final-score').innerText = gameScore;
+            
+            if(gameScore === 8) {
+                playSound('correct');
+            }
+        }
+
+        // --- Refleksi Logic ---
+        function submitRefleksi(type) {
+            playSound('pop');
+            const msgDiv = document.getElementById('refleksi-msg');
+            msgDiv.classList.remove('hidden', 'border-amber-400', 'text-amber-800', 'border-green-400', 'text-green-800', 'border-blue-400', 'text-blue-800');
+            
+            if(type === 'sedih') {
+                msgDiv.innerHTML = "Tidak apa-apa jika masih bingung! Alam memang penuh misteri. Jangan ragu untuk bertanya pada gurumu ya! Tetap semangat! 🌱";
+                msgDiv.classList.add('border-blue-400', 'text-blue-800', 'bg-blue-50');
+            } else if (type === 'biasa') {
+                msgDiv.innerHTML = "Mantap! Kamu sudah mengerti dasar-dasarnya. Teruslah bermain game memilah komponen ekosistem agar makin lancar! 🌿";
+                msgDiv.classList.add('border-amber-400', 'text-amber-800', 'bg-amber-50');
+            } else {
+                msgDiv.innerHTML = "Wah, Hebat Sekali! 🌟 Kamu sudah menjadi pahlawan pelindung bumi yang mengerti pentingnya menjaga ekosistem!";
+                msgDiv.classList.add('border-green-400', 'text-green-800', 'bg-green-50');
+            }
+            
+            // Add pulse effect
+            msgDiv.classList.add('animate-pulse');
+            setTimeout(() => {
+                msgDiv.classList.remove('animate-pulse');
+            }, 2000);
+        }
+        
+    </script>
+</body>
+</html>
